@@ -23,9 +23,9 @@ class Calculation
     private ?string $hash;
 
     /**
-     * @ORM\Column(type="json")
+     * @ORM\Column(type="text")
      */
-    private array $products = [];
+    private string $products;
 
     /**
      * @ORM\Column(type="json")
@@ -59,7 +59,7 @@ class Calculation
 
     public function getProducts(): ?array
     {
-        return $this->products;
+        return unserialize($this->products);
     }
 
     /**
@@ -67,7 +67,7 @@ class Calculation
      */
     public function setProducts(array $products): self
     {
-        $this->products = $products;
+        $this->products = serialize($products);
 
         return $this;
     }

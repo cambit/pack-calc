@@ -33,22 +33,29 @@ class PackingCalculationController extends AbstractController
             'hash' => $hash,
         ]);
 
-        if (!$calculation) {
-            $packing = $threeDBinPackingApi->calculate($products);
+        if ($calculation) {
+            //check if products are same
+            $results = array_diff(array_map('serialize', $calculation->getProducts()), array_map('serialize', $sorted_products));
 
-            $entityManager = $this->getDoctrine()->getManager();
+            if (empty($results)) {
+                $packing = $calculation->getBox();
 
-            $calculation = new Calculation();
-            $calculation->setHash($hash);
-            $calculation->setBox($packing);
-            $calculation->setProducts($sorted_products);
-            $calculation->setAlert(isset($packing[$bins->getDefaultBinId()]));
-
-            $entityManager->persist($calculation);
-            $entityManager->flush();
-        } else {
-            $packing = $calculation->getBox();
+                return $this->response($packing);
+            }
         }
+
+        $packing = $threeDBinPackingApi->calculate($products);
+
+        $entityManager = $this->getDoctrine()->getManager();
+
+        $calculation = new Calculation();
+        $calculation->setHash($hash);
+        $calculation->setBox($packing);
+        $calculation->setProducts($sorted_products);
+        $calculation->setAlert(isset($packing[$bins->getDefaultBinId()]));
+
+        $entityManager->persist($calculation);
+        $entityManager->flush();
 
         return $this->response($packing);
     }
