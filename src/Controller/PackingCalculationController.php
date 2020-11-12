@@ -25,7 +25,8 @@ class PackingCalculationController extends AbstractController
         }
         $products = $request_json['products'];
 
-        $hash = $productHashService->getHash($products);
+        $sorted_products = $productHashService->sort($products);
+        $hash = $productHashService->getHash($sorted_products);
 
         $repository = $this->getDoctrine()->getRepository(Calculation::class);
         $calculation = $repository->findOneBy([
@@ -40,7 +41,7 @@ class PackingCalculationController extends AbstractController
             $calculation = new Calculation();
             $calculation->setHash($hash);
             $calculation->setBox($packing);
-            $calculation->setProducts($products);
+            $calculation->setProducts($sorted_products);
             $calculation->setAlert(isset($packing[$bins->getDefaultBinId()]));
 
             $entityManager->persist($calculation);
