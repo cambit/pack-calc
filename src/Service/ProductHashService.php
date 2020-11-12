@@ -29,10 +29,7 @@ class ProductHashService
         return $items;
     }
 
-
     /**
-     * @param array $first
-     * @param array $second
      * @return int
      */
     private function compare(array $first, array $second)
