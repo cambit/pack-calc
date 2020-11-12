@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+{% block title %} {{ title }}{% endblock %}
+{% block body %}
+    {% if twitter_search_response.statuses|length > 0 %}
+        <h2> Hledání provedeno pro výrazy: <b>{{ search_terms|join(', ', ' a ') }}</b></h2>
+        <table>
+            <thead>
+            <tr>
+                <td>User</td>
+                <td>Tweet</td>
+                <td>Mention in</td>
+            </tr>
+            </thead>
+            {% for tweet in twitter_search_response.statuses %}
+                <tr>
+                    <td>{{ tweet.user.name }}</td>
+                    <td>{{ tweet.text }}</td>
+                    <td>
+                        {% if tweet.entities.hashtags|length > 0 %} hashtags <br> {% endif %}
+                        {% if tweet.entities.urls|length > 0 %} url <br>{% endif %}
+                        {% if tweet.entities.user_mentions|length > 0 %} user <br>{% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        Nenalezeny žádné tweety!
+    {% endif %}
+
+{% endblock %}
